@@ -39,7 +39,7 @@ def whatsapp():
     message = client.messages.create(
         body=response_message, from_=TWILIO_PHONE_NUMBER, to=from_number
     )
-    return jsonify({"message": "✅ Message sent successfully."}, 200)
+    return jsonify({"message": "Message sent successfully."}, 200)
 
 
 if __name__ == "__main__":

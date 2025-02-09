@@ -4,9 +4,10 @@ from langchain import hub
 from langgraph.prebuilt import create_react_agent
 from langchain.chat_models import init_chat_model
 from gemini import classify_message
-from models import User, Expense, db
+from models import db, User, Expense
 import json
-
+from datetime import datetime
+from sqlalchemy import func
 
 def create_agent():
     llm = init_chat_model("gemini-1.5-flash", model_provider="google_genai")
@@ -65,14 +66,38 @@ def analyze_sentiment(message, phone):
 
         db.session.add(expense)
         db.session.commit()
-        return "Expense added successfully!"
+        message = f"""
+        ✅ Expense added successfully!
+        🗓 Date: {expense.date.strftime("%d-%m-%Y")}
+        💰 Amount: ₹ {expense.amount}
+        📝 Category: {expense.category}
+        📄 Description: {expense.description}
+        """
+        bugdet = user.limit_amount
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        total_expenses = db.session.query(func.sum(Expense.amount)).filter(
+            func.extract('month', Expense.date) == current_month,
+            func.extract('year', Expense.date) == current_year
+        ).scalar()
+        if total_expenses > bugdet:
+            message += f"""\n🚨 You have exceeded your budget of *₹ {bugdet}* for this month. 💸 The total expenses for the current month is *₹ {total_expenses}*."""
+        else:
+            message += f"""\n💸 The total expenses for the current month is *₹ {total_expenses}*. You have *₹ {bugdet - total_expenses}* left in your budget for this month."""
+        return message
     elif res.get("update_limit"):
         user.limit_amount = res["update_limit"]["limit_amount"]  # Update the limit
-        db.session.commit()  # Commit the changes
+        db.session.commit()
+
+        current_month = datetime.now().month
+        current_year = datetime.now().year
+        total_expenses = db.session.query(func.sum(Expense.amount)).filter(
+            func.extract('month', Expense.date) == current_month,
+            func.extract('year', Expense.date) == current_year
+        ).scalar()
         msg = f"""
-        The limit amount has been updated .
-        You have currently set a limit of {res["update_limit"]["limit_amount"]}.
+        ✅ The limit amount has been updated.\n 💵 You have currently set a limit of *₹ {res["update_limit"]["limit_amount"]}*.\n 💸 The total expenses for the current month is *₹ {total_expenses}*.
         """
-        return msg  # Returns updated limit amount
+        return msg
     else:
         return "Some error occurred . Please try after sometime"  # Default case if no matching category
