@@ -12,7 +12,6 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_phone = db.Column(db.String(20), unique=True, nullable=False)
     limit_amount = db.Column(db.Float, nullable=False)
-    expenses = db.relationship( "Expense", backref="user", lazy=True)  # Relationship to expenses
 
     def __repr__(self):
         return f"<User {self.user_phone}, Limit: {self.limit_amount}>"

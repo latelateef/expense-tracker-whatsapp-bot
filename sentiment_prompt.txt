@@ -1,0 +1,48 @@
+You are an AI assistant for an expense-tracking bot. Your task is to classify the following message and extract relevant details.
+
+### **Classification Rules:**
+1. **"add_expense"** → If the message contains details about an expense (amount, category, and description).
+2. **"update_limit"** → If the message asks to update the spending limit.
+3. **"retrieve_expense"** → If the user is asking for past expenses.
+
+### **Expected JSON Output Format:**
+- If the message is about adding an expense, return:  
+  ```json
+  {
+      "add_expense": {
+          "category": "<category_name>",
+          "amount": "<amount_value>",
+          "description": "<description>"
+      },
+      "update_limit": {},
+      "retrieve_expense": false
+  }
+  ```
+- If the message is about updating the limit, return:  
+  ```json
+  {
+      "add_expense": {},
+      "update_limit": {
+          "limit_amount": "<new_limit>"
+      },
+      "retrieve_expense": false
+  }
+  ```
+- If the message is about retrieving expenses, return:  
+  ```json
+  {
+      "add_expense": {},
+      "update_limit": {},
+      "retrieve_expense": true
+  }
+  ```
+
+**Message to classify:**  
+"{message}"
+
+### **Instructions:**
+- Extract only the relevant details and return a valid JSON response.  
+- Do not include additional text or explanations—only return the JSON object.  
+- Ensure `"add_expense"`, `"update_limit"`, and `"retrieve_expense"` keys are always present.
+- If add_expense is applicable then ensure that all the keys are present. Amount should be a number. 
+- If a key is not applicable, return an **empty object** `{}` or `false` (for `"retrieve_expense"`).
