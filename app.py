@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 from twilio.rest import Client
 from flask_migrate import Migrate
-from models import db, init_app, User, Expense
-from utils import analyze_sentiment
+from models import db, init_app, User
+from process_user_query import process_user_query
 
 load_dotenv()
 app = Flask(__name__)
@@ -26,15 +26,35 @@ def whatsapp():
     if not incoming_msg:
         return jsonify({"message": "Please provide a message."}, 400)
 
+    response_message = """"""
     user = db.session.query(User).filter_by(user_phone=from_number).first()
     if not user:
-        user = User(user_phone=from_number, limit_amount=1000)
+        user = User(user_phone=from_number, limit_amount=5000)
         db.session.add(user)
         db.session.commit()
+        response_message += f"""
+👋 Welcome to Expense Tracker! 📊
 
-    response_message = analyze_sentiment(
-        message=incoming_msg, phone=from_number
+💰 Your Current Monthly Limit: *₹ {user.limit_amount}*
+
+✨ What you can do:
+    📝 Update your monthly limit
+    💸 Add new expenses
+    🔍 Retrieve past expense details
+    🔄 View your current monthly limit
+    🧹 Delete all expenses
+    🗑️ Delete your account
+
+💡 Need help?
+Type "help" for assistance!
+
+"""
+
+    response_message += process_user_query(
+        incoming_msg, from_number
     )
+
+    print(response_message)
 
     message = client.messages.create(
         body=response_message, from_=TWILIO_PHONE_NUMBER, to=from_number
