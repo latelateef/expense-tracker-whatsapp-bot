@@ -22,7 +22,7 @@ def create_agent():
 
 def retrieve_expense(user_phone, user_query):
     agent_executor = create_agent()
-    prompt_template = """
+    prompt_template = f"""
     You are an expense tracking assistant that helps users manage and analyze their spending.
     - The user has the phone number: {user_phone}
     - They asked: "{user_query}"
@@ -35,16 +35,17 @@ def retrieve_expense(user_phone, user_query):
     5. Format the response attractively using **emojis and humor**.
 
     Ensure the response is **clear, engaging, and informative**.
+    Ensure the final response is **text message** and **formatted attractively**. Do not give python or ecxecution steps in the final response. And also ensure the final dates is in dd-mm-yy format i.e human readable format in the final response.
     """
-    formatted_prompt = prompt_template.format(user_phone=user_phone, user_query=user_query)
 
     events = agent_executor.stream(
-        {"messages": [("user", formatted_prompt)]}, stream_mode="values"
+        {"messages": [("user", prompt_template)]}, stream_mode="values"
     )
-    last_response = ""
+    print(prompt_template)
+    last_response = """"""
     for event in events:
         last_response = event["messages"][-1].content
-        print(last_response)
+        # print(last_response)
         event["messages"][-1].pretty_print()
 
     return last_response
