@@ -1,7 +1,8 @@
 import json
-from utils import add_expense, update_limit, view_limit, delete_all_expenses, delete_account, help
+from utils import add_expense, update_limit, view_limit, help, miscellaneous
 from gemini import classify_message
 from retrieve_expenses import retrieve_expense
+from utils import send_confirmation_message
 
 
 def process_user_query(user_message, user_phone):
@@ -18,10 +19,10 @@ def process_user_query(user_message, user_phone):
     elif res.get("view_limit"):
         return view_limit(user_phone)
     elif res.get("delete_all_expenses"):
-        return delete_all_expenses(user_phone)
+        return send_confirmation_message(user_phone, "expense_deletion")
     elif res.get("delete_account"):
-        return delete_account(user_phone)
+        return send_confirmation_message(user_phone, "account_deletion")
     elif res.get("help"):
         return help()
     else:
-        return """Sorry, I didn't understand that. 😕 Please type "help" for assistance. 🆘"""
+        return miscellaneous()

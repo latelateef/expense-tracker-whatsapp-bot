@@ -1,6 +1,108 @@
 from sqlalchemy import func
 from datetime import datetime
+from twilio.rest import Client
 from models import db, User, Expense
+from dotenv import load_dotenv
+import os
+from flask import  jsonify
+
+load_dotenv()
+
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
+
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+def send_response_message(user_phone, response_message):
+    message = client.messages.create(
+        body=response_message, from_=TWILIO_PHONE_NUMBER, to=user_phone
+    )
+    return message
+
+
+def send_confirmation_message(user_phone, state):
+    # Send the confirmation message with quick reply buttons for "Yes" and "No"
+    confirmation_msg = """
+⚠️ Are you sure you want to delete your {state}? This action cannot be undone.
+Reply with "Yes" to confirm or "No" to cancel.
+"""
+    if state == "expense_deletion":
+        confirmation_msg = confirmation_msg.format(state="expenses")
+    elif state == "account_deletion":
+        confirmation_msg = confirmation_msg.format(state="account")
+
+    set_user_state(user_phone, state)
+
+    # Define the quick reply buttons
+    actions = [
+        {
+            "type": "quick_reply",
+            "title": "Yes",
+            "id": "yes"
+        },
+        {
+            "type": "quick_reply",
+            "title": "No",
+            "id": "no"
+        }
+    ]
+
+    # Create the content
+    content = {
+        "body": confirmation_msg,
+        "actions": actions
+    }
+
+    # Send the message
+    # message = client.messages.create(
+    #     from_=TWILIO_PHONE_NUMBER,
+    #     to=user_phone,
+    #     content_variables=content,
+    #     content_sid="HX9fe7e687ab935c63ccb68c3745661a4d"
+    # )
+    return confirmation_msg
+
+
+def check_confirmation_response(user_phone, user_state, response):
+    response_message = """"""
+    if user_state == "expense_deletion":
+        if response.lower().startswith("yes"):
+            response_message = delete_all_expenses(user_phone)
+        elif response.lower().startswith("no"):
+            response_message = """❌ Your expense deletion has been canceled."""
+
+        reset_user_state(user_phone)
+    elif user_state == "account_deletion":
+        if response.lower().startswith("yes"):
+            response_message = delete_account(user_phone)
+        elif response.lower().startswith("no"):
+            response_message = """❌ Your account deletion has been canceled."""
+
+        reset_user_state(user_phone)
+
+    return response_message
+
+
+def get_user_state(user_phone):
+    # Retrieve the state from the database or session
+    user = db.session.query(User).filter_by(user_phone=user_phone).first()
+    return user.state if user else None
+
+def set_user_state(user_phone, state):
+    # Store the state in the database or session
+    user = db.session.query(User).filter_by(user_phone=user_phone).first()
+    if user:
+        user.state = state
+        db.session.commit()
+
+def reset_user_state(user_phone):
+    # Reset the user state after the confirmation process
+    user = db.session.query(User).filter_by(user_phone=user_phone).first()
+    if user:
+        user.state = None  # or some default state
+        db.session.commit()
+
+
 
 def add_expense(user_phone, res):
     user = db.session.query(User).filter_by(user_phone=user_phone).first()  # Get the user
@@ -160,3 +262,7 @@ def help():
     7. "Show my limit"
     8. "Help"
 """
+
+
+def miscellaneous():
+    return """Sorry, I didn't understand that 😕, I'm an expense tracker bot. Please type "help" for assistance. 🆘 """
