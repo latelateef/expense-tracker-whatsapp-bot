@@ -1,14 +1,14 @@
 import json
-from utils import add_expense, update_limit, view_limit, help, miscellaneous
+from queries import add_expense, update_limit, view_limit, help, miscellaneous
 from gemini import classify_message
 from retrieve_expenses import retrieve_expense
-from utils import send_confirmation_message
+from send_message import send_confirmation_message
 
-
+# Function to process the user's query
 def process_user_query(user_message, user_phone):
     res = classify_message(user_message)
     res = json.loads(res)
-    print(res)
+    # print(res)
 
     if res.get("retrieve_expense"):
         return retrieve_expense(user_phone, user_message)
@@ -25,4 +25,4 @@ def process_user_query(user_message, user_phone):
     elif res.get("help"):
         return help()
     else:
-        return miscellaneous()
+        return miscellaneous() # If the query is not recognized, return a miscellaneous response

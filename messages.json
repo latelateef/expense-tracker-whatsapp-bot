@@ -1,0 +1,25 @@
+{
+    "welcome_message": "👋 Welcome to Expense Tracker! 📊\n\n💰 Your Current Monthly Limit: *₹ {limit_amount}*\n\n✨ What you can do:\n    📝 Update your monthly limit\n    💸 Add new expenses\n    🔍 Retrieve past expense details\n    🔄 View your current monthly limit\n    🧹 Delete all expenses\n    🗑️ Delete your account\n\n💡 Need help?\nType \"help\" for assistance!\n\n",
+
+    "expense_added": "✅ Expense added successfully!\n\n🗓 Date: {date}\n💰 Amount: ₹ {amount}\n📝 Category: {category}\n📄 Description: {description}\n\n",
+
+    "bugdet_exceeded": "🚨 You have exceeded your budget of *₹ {limit_amount}* for this month!\n💸 The total expenses for the current month is *₹ {total_expenses}*.\n\n",
+
+    "bugdet_ok": "💸 The total expenses for the current month is *₹ {total_expenses}*.\n💰 You have *₹ {limit_amount - total_expenses}* left in your budget for this month.\n\n",
+
+    "limit_updated": "✅ Monthly limit updated successfully!\n💰 New Monthly Limit: ₹ *{limit_amount}*\n💸 The total expenses for the current month is *₹ {total_expenses}*.\n\n",
+
+    "view_limit": "💰 Your current monthly limit is *₹ {limit_amount}*.\n💸 The total expenses for the current month is *₹ {total_expenses}*.\n\n",
+
+    "expenses_deleted": "🗑️ All your expenses have been deleted successfully.\n\n",
+
+    "account_deleted": "🗑️ Your account has been deleted successfully.\n\n",
+
+    "help_message": "🤖 *Expense Tracker Bot* 🤖\n\n✨ What you can do:\n    📝 Update your monthly limit\n    💸 Add new expenses\n    🔍 Retrieve past expense details\n    🔄 View your current monthly limit\n    🧹 Delete all expenses\n    🗑️ Delete your account\n\n📝 Here are some example queries you can try:\n    1. \"Add ₹ 500 for groceries\"\n    2. \"Add 200 for travel\"\n    3. \"Update my monthly limit to Rs 5000\"\n    4. \"Show my expenses\"\n    5. \"Delete my expenses\"\n    6. \"Delete my account\"\n    7. \"Show my limit\"\n    8. \"Help\" \n\n",
+
+    "miscellaneous": "Sorry, I didn't understand that 😕, I'm an expense tracker bot. Please type \"help\" for assistance.\n\n",
+
+    "confirmation_message": "🤖 *Expense Tracker Bot* 🤖\n\n⚠️ Are you sure you want to delete your {state}?\n\n👍 Reply with \"Yes\" to confirm or \"No\" to cancel.\n\n",
+
+    "deletion_cancelled": "🚫 Deletion cancelled!\n\n"
+}
