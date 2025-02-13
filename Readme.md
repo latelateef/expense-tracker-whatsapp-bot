@@ -40,7 +40,7 @@ A smart, AI-powered WhatsApp bot built using **Flask, SQLite, and LangChain Agen
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/expense-tracker-whatsapp-bot.git
+git clone https://github.com/latelateef/expense-tracker-whatsapp-bot.git
 cd expense-tracker-whatsapp-bot
 ```
 
